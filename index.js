@@ -1,4 +1,5 @@
 const express = require('express')
+const morgan = require('morgan')
 const app = express()
 
 let persons = [
@@ -24,6 +25,7 @@ let persons = [
   }
 ]
 
+app.use(morgan('tiny'))
 app.use(express.json())
 
 app.get('/api/persons', (request, respons) => {
@@ -45,6 +47,14 @@ app.delete('/api/persons/:id', (request, response) => {
 })
 
 app.post('/api/persons/', (request, response) => {
+  if (!request.body.name || !request.body.number) {
+    return response.status(400).json({error: 'name or number missing'})
+  }
+
+  if (persons.find(person => person.name === request.body.name)) {
+    return response.status(400).json({error: 'name must be unique'})
+  }
+
   const id = Math.floor(Math.random() * 1000000)
   const person = {
     id: id,
