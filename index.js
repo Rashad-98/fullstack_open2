@@ -25,7 +25,13 @@ const persons = [
 ]
 
 app.get('/api/persons', (request, respons) => {
-    respons.json(persons)
+  respons.json(persons)
+})
+
+app.get('/api/persons/:id', (request, response) => {
+  const person = persons.find(person => person.id === Number(request.params.id))
+  if (!person) response.status(404).end()
+  response.json(person)
 })
 
 app.get('/info', (request, response) => {
